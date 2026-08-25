@@ -132,7 +132,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
     "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.ScopedRateThrottle"],
-    "DEFAULT_THROTTLE_RATES": {"contact": "5/hour"},
+    # Rate is configurable so the E2E suite can raise it; production keeps 5/hour.
+    "DEFAULT_THROTTLE_RATES": {"contact": env("CONTACT_THROTTLE_RATE", "5/hour")},
 }
 
 SPECTACULAR_SETTINGS = {

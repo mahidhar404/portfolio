@@ -8,11 +8,7 @@ import type { SectionProps } from "./types";
 function ProficiencyMeter({ value, label }: { value: number; label: string }) {
   const reduceMotion = useReducedMotion();
   return (
-    <span
-      className="inline-flex gap-[3px]"
-      role="img"
-      aria-label={`${label}: ${value} out of 5`}
-    >
+    <span className="inline-flex gap-[3px]" role="img" aria-label={`${label}: ${value} out of 5`}>
       {[1, 2, 3, 4, 5].map((step) => (
         <motion.span
           key={step}

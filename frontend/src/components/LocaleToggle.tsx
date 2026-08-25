@@ -6,9 +6,7 @@ import { cn } from "@/lib/cn";
 
 export function LocaleToggle() {
   const { i18n } = useTranslation();
-  const [current, setCurrent] = useState<Locale>(
-    (i18n.language.slice(0, 2) as Locale) ?? "en",
-  );
+  const [current, setCurrent] = useState<Locale>((i18n.language.slice(0, 2) as Locale) ?? "en");
 
   function choose(locale: Locale): void {
     setCurrent(locale);

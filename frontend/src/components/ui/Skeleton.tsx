@@ -5,12 +5,7 @@ import { cn } from "@/lib/cn";
  * when the real data arrives.
  */
 export function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={cn("animate-pulse rounded bg-raised", className)}
-    />
-  );
+  return <div aria-hidden="true" className={cn("animate-pulse rounded bg-raised", className)} />;
 }
 
 export function SectionSkeleton() {

@@ -83,9 +83,7 @@ const projectBase = z.object({
 const projectDetail = projectBase.extend({
   description: z.string().optional(),
   case_study: z.string().optional(),
-  images: z.array(
-    z.object({ id: z.number(), image: z.string(), caption: z.string().optional() }),
-  ),
+  images: z.array(z.object({ id: z.number(), image: z.string(), caption: z.string().optional() })),
 });
 
 const siteSettings = z.object({
@@ -137,7 +135,12 @@ export const portfolioSchema = z.object({
   profile,
   section_order: z.array(z.string()),
   social_links: z.array(
-    z.object({ id: z.number(), platform: z.string(), url: z.string(), icon: z.string().optional() }),
+    z.object({
+      id: z.number(),
+      platform: z.string(),
+      url: z.string(),
+      icon: z.string().optional(),
+    }),
   ),
   experience: z.array(experience),
   education: z.array(education),

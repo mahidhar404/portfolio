@@ -135,9 +135,7 @@ export function ContactSection({ data, id, title, eyebrow }: SectionProps) {
           </button>
 
           <div aria-live="polite" className="min-h-6 text-sm">
-            {mutation.isSuccess ? (
-              <p className="text-brand">{t("contact.sent")}</p>
-            ) : null}
+            {mutation.isSuccess ? <p className="text-brand">{t("contact.sent")}</p> : null}
             {mutation.isError ? (
               <p className="text-red-600 dark:text-red-400">
                 {throttled ? t("contact.throttled") : t("contact.error")}

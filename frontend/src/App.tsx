@@ -80,8 +80,7 @@ export function App() {
               © {new Date().getFullYear()} {data.profile.full_name}
             </p>
             <p className="font-mono text-xs">
-              {t("nav.resume")} ·{" "}
-              {data.social_links.map((link) => link.platform).join(" · ")}
+              {t("nav.resume")} · {data.social_links.map((link) => link.platform).join(" · ")}
             </p>
           </div>
         </footer>

@@ -1,5 +1,10 @@
-# These packages ship platform-specific native binaries and need their install
-# scripts to run. Everything else stays blocked by default.
+# pnpm 11 reads build-script permissions from here rather than package.json.
+# The root package must be listed or pnpm treats this as an empty workspace.
+packages:
+  - "."
+
+# These ship platform-specific native binaries and need their install scripts.
+# Everything else stays blocked by default.
 allowBuilds:
   esbuild: true
   msw: true

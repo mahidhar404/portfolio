@@ -18,15 +18,7 @@ interface ImageProps {
  * Explicit dimensions and a reserved aspect box, so images never cause layout
  * shift while they load.
  */
-export function Image({
-  src,
-  alt,
-  width,
-  height,
-  className,
-  fallback,
-  eager = false,
-}: ImageProps) {
+export function Image({ src, alt, width, height, className, fallback, eager = false }: ImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const url = mediaUrl(src);

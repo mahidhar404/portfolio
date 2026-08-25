@@ -15,9 +15,7 @@ export function Tag({
     <span
       className={cn(
         "inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] tracking-wide",
-        active
-          ? "border-brand bg-brand/10 text-brand"
-          : "border-rule bg-raised text-muted",
+        active ? "border-brand bg-brand/10 text-brand" : "border-rule bg-raised text-muted",
         className,
       )}
     >

@@ -14,9 +14,7 @@ const MarkdownRenderer = lazy(() => import("./MarkdownRenderer"));
 export function Markdown({ children, className }: { children: string; className?: string }) {
   return (
     <div className={cn("space-y-3 leading-relaxed text-muted", className)}>
-      <Suspense
-        fallback={<div className="max-w-[68ch] whitespace-pre-line">{children}</div>}
-      >
+      <Suspense fallback={<div className="max-w-[68ch] whitespace-pre-line">{children}</div>}>
         <MarkdownRenderer>{children}</MarkdownRenderer>
       </Suspense>
     </div>

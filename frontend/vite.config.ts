@@ -6,7 +6,7 @@ import path from "node:path";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
-    alias: { "@": path.resolve(__dirname, "./src") },
+    alias: { "@": path.resolve(import.meta.dirname, "./src") },
   },
   build: {
     // Route-level chunks keep the initial bundle small; everything below the
@@ -17,7 +17,11 @@ export default defineConfig({
           if (!id.includes("node_modules")) return undefined;
           // Anchored on the trailing separator so this matches react / react-dom /
           // react-router-dom exactly, and never react-markdown.
-          if (/[\\/]node_modules[\\/](react|react-dom|react-router-dom|react-router|scheduler)[\\/]/.test(id))
+          if (
+            /[\\/]node_modules[\\/](react|react-dom|react-router-dom|react-router|scheduler)[\\/]/.test(
+              id,
+            )
+          )
             return "react";
           if (id.includes("@tanstack")) return "query";
           if (id.includes("framer-motion") || id.includes("motion-dom")) return "motion";
