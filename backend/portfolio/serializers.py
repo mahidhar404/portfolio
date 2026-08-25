@@ -72,7 +72,7 @@ class SkillCategorySerializer(serializers.ModelSerializer[SkillCategory]):
         model = SkillCategory
         fields = ["id", "name", "icon", "order", "skills"]
 
-    def get_skills(self, obj: SkillCategory) -> list[dict[str, Any]]:
+    def get_skills(self, obj: SkillCategory) -> Any:
         published = [skill for skill in obj.skills.all() if skill.is_published]
         return SkillSerializer(published, many=True, context=self.context).data
 
@@ -283,7 +283,9 @@ class SectionConfigSerializer(serializers.Serializer[dict[str, Any]]):
 
     key = serializers.CharField()
     enabled = serializers.BooleanField(default=True)
-    label = serializers.CharField(allow_null=True, required=False)
+    # `label` is also an attribute name on Field, hence the ignore; the wire format
+    # needs this exact key, so renaming the field is not an option.
+    label = serializers.CharField(allow_null=True, required=False)  # type: ignore[assignment]
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer[SiteSettings]):
@@ -415,11 +417,11 @@ class ContactMessageSerializer(serializers.ModelSerializer[ContactMessage]):
 
 
 def _client_ip(request: Any) -> str | None:
-    forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    forwarded = str(request.META.get("HTTP_X_FORWARDED_FOR", ""))
     if forwarded:
         return forwarded.split(",")[0].strip()
-    ip: str | None = request.META.get("REMOTE_ADDR")
-    return ip
+    remote_addr = request.META.get("REMOTE_ADDR")
+    return str(remote_addr) if remote_addr else None
 
 
 def _writable(model: type[Any], name: str) -> type[serializers.ModelSerializer[Any]]:

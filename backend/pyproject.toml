@@ -54,6 +54,26 @@ exclude = ["migrations/"]
 module = ["cloudinary.*", "cloudinary_storage.*", "adminsortable2.*", "factory.*"]
 ignore_missing_imports = true
 
+# django-admin-sortable2 ships no type stubs, so its mixins resolve to Any and
+# strict mode refuses to subclass them. The admin classes are still fully
+# annotated; this only relaxes the base-class check for that one module.
+[[tool.mypy.overrides]]
+module = ["portfolio.admin"]
+disallow_subclassing_any = false
+
+# factory_boy's declarative API (Sequence, SubFactory, …) carries no annotations.
+# This relaxation is confined to the factory definitions themselves; the TypedFactory
+# facade in that module gives every *call site* in the test suite a real model type.
+[[tool.mypy.overrides]]
+module = ["tests.factories"]
+disallow_untyped_calls = false
+disallow_subclassing_any = false
+
+# factory re-exports its declarations from submodules without __all__ entries.
+[[tool.mypy.overrides]]
+module = ["factory", "factory.*"]
+implicit_reexport = true
+
 [tool.django-stubs]
 django_settings_module = "config.settings.dev"
 

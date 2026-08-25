@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 from typing import Any
 
+from django.conf import settings as django_settings
 from django.db import connection
 from django.db.models import Max, Model, Prefetch, QuerySet
 from django.utils import timezone
@@ -19,8 +20,6 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from django.conf import settings as django_settings
 
 from .models import (
     Award,
@@ -162,8 +161,8 @@ class PortfolioView(APIView):
             return response
 
         payload = build_portfolio_payload()
-        data = PortfolioSerializer(payload, context={"request": request, **payload["_context"]}).data
-        response = Response(data)
+        context = {"request": request, **payload.pop("_context")}
+        response = Response(PortfolioSerializer(payload, context=context).data)
         response["ETag"] = etag
         response["Cache-Control"] = django_settings.PORTFOLIO_CACHE_CONTROL
         return response
@@ -233,7 +232,7 @@ class ContentViewSet(PublicReadMixin, viewsets.ModelViewSet[Any]):
         return self.write_serializer_class
 
     def get_queryset(self) -> QuerySet[Any]:
-        queryset = self.queryset
+        queryset: QuerySet[Any] = super().get_queryset()
         if self.request.method in ("GET", "HEAD") and not self.request.user.is_staff:
             queryset = queryset.filter(is_published=True)
         return queryset

@@ -65,6 +65,13 @@ def _date(value: str | None) -> dt.date | None:
     return dt.date.fromisoformat(value) if value else None
 
 
+def _required_date(value: str | None) -> dt.date:
+    """For model fields that are NOT NULL — the schema guarantees these are present."""
+    if not value:
+        raise ValueError("a required date was missing")
+    return dt.date.fromisoformat(value)
+
+
 class Command(BaseCommand):
     help = "Seed the database with a complete demo portfolio."
 
@@ -156,7 +163,7 @@ class Command(BaseCommand):
                     "employment_type": item["employment_type"],
                     "location": item["location"],
                     "is_remote": item["is_remote"],
-                    "start_date": _date(item["start_date"]),
+                    "start_date": _required_date(item["start_date"]),
                     "end_date": _date(item["end_date"]),
                     "is_current": item["is_current"],
                     "description": item["description"],
@@ -187,7 +194,7 @@ class Command(BaseCommand):
                     "field_of_study": item["field_of_study"],
                     "grade_value": item["grade_value"],
                     "grade_scale": item["grade_scale"],
-                    "start_date": _date(item["start_date"]),
+                    "start_date": _required_date(item["start_date"]),
                     "end_date": _date(item["end_date"]),
                     "location": item["location"],
                     "thesis_title": item["thesis_title"],
@@ -213,7 +220,7 @@ class Command(BaseCommand):
                     "description": item["description"],
                     "case_study": item["case_study"],
                     "role": item["role"],
-                    "start_date": _date(item["start_date"]),
+                    "start_date": _required_date(item["start_date"]),
                     "end_date": _date(item["end_date"]),
                     "repo_url": item.get("repo_url", ""),
                     "live_url": item.get("live_url", ""),
@@ -289,7 +296,7 @@ class Command(BaseCommand):
                 organisation=item["organisation"],
                 role=item["role"],
                 defaults={
-                    "start_date": _date(item["start_date"]),
+                    "start_date": _required_date(item["start_date"]),
                     "end_date": _date(item["end_date"]),
                     "is_current": item["is_current"],
                     "description": item["description"],

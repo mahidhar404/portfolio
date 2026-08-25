@@ -25,3 +25,6 @@ STORAGES = {
 # Throttle tests need the real rate; everything else runs without a cache backend.
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 REST_FRAMEWORK = {**REST_FRAMEWORK, "NUM_PROXIES": 0}
+
+# Whitenoise has no collected staticfiles dir under test; drop it to keep output clean.
+MIDDLEWARE = [m for m in MIDDLEWARE if "whitenoise" not in m]  # noqa: F405

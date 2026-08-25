@@ -24,7 +24,9 @@ def _rgb(hue: float, saturation: float, value: float) -> tuple[int, int, int]:
     return int(r * 255), int(g * 255), int(b * 255)
 
 
-def gradient_image(seed: str, width: int, height: int, label: str = "") -> ContentFile:
+def gradient_image(
+    seed: str, width: int, height: int, label: str = ""
+) -> ContentFile[bytes]:
     """A soft diagonal-gradient panel, deterministic for a given seed."""
     hue = _hue_from(seed)
     start = _rgb(hue, 0.55, 0.85)
@@ -40,6 +42,7 @@ def gradient_image(seed: str, width: int, height: int, label: str = "") -> Conte
 
     if label:
         initials = "".join(part[0] for part in label.split()[:2]).upper()
+        font: ImageFont.FreeTypeFont | ImageFont.ImageFont
         try:
             font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", size=height // 4)
         except OSError:  # pragma: no cover - font availability varies by platform
@@ -57,10 +60,10 @@ def gradient_image(seed: str, width: int, height: int, label: str = "") -> Conte
     return ContentFile(buffer.getvalue())
 
 
-def avatar_image(seed: str, size: int = 512) -> ContentFile:
+def avatar_image(seed: str, size: int = 512) -> ContentFile[bytes]:
     """A portrait-shaped placeholder for the profile photo."""
     return gradient_image(seed, size, size, label="A R")
 
 
-def logo_image(seed: str, label: str, size: int = 128) -> ContentFile:
+def logo_image(seed: str, label: str, size: int = 128) -> ContentFile[bytes]:
     return gradient_image(seed, size, size, label=label)

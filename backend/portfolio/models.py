@@ -11,11 +11,12 @@ Three abstract bases carry the conventions the whole app relies on:
 
 from __future__ import annotations
 
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar, Self, cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 
@@ -85,11 +86,24 @@ class Orderable(TimeStamped):
 class Singleton(TimeStamped):
     """Site-wide configuration that must have exactly one row."""
 
+    # Annotation only — Django still installs the real manager at runtime. This
+    # tells mypy that concrete subclasses have a manager, which an abstract base
+    # otherwise cannot promise.
+    objects: ClassVar[models.Manager[Any]]
+
     class Meta:
         abstract = True
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         self.pk = 1
+        # Forcing pk=1 on a freshly constructed instance turns the write into an
+        # UPDATE, and auto_now_add does not fire on updates — which would write a
+        # NULL created_at. Carry the existing row's value across instead.
+        if self.created_at is None:
+            existing = (
+                type(self).objects.filter(pk=1).values_list("created_at", flat=True).first()
+            )
+            self.created_at = existing or timezone.now()
         super().save(*args, **kwargs)
 
     def delete(self, *args: Any, **kwargs: Any) -> Any:
@@ -98,7 +112,7 @@ class Singleton(TimeStamped):
     @classmethod
     def load(cls) -> Self:
         obj, _ = cls.objects.get_or_create(pk=1)
-        return obj
+        return cast("Self", obj)
 
 
 # ---------------------------------------------------------------------------
