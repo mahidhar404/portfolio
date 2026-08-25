@@ -268,6 +268,21 @@ make e2e           # Playwright against a real build and a real API
 
 ---
 
+## Measured results
+
+| | Desktop | Mobile |
+|---|---|---|
+| Performance | 100 | 89 |
+| Accessibility | 100 | 100 |
+| Best Practices | 100 | 100 |
+| SEO | 100 | 100 |
+
+Tests: 175 backend, 87 frontend, 38 end-to-end across desktop and mobile viewports.
+Initial JavaScript is 167 kB gzipped; CI fails the build above 200 kB.
+
+Accessibility is not a one-off audit — axe-core runs against every route in both themes on every
+CI run, and any WCAG 2.1 AA violation fails the build.
+
 ## How the pieces fit
 
 ```

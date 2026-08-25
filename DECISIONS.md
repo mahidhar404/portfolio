@@ -110,3 +110,32 @@ warning with a note to delete both at the Django 6 upgrade.
 
 **No CSS-in-JS, no component library.** Tailwind v4 with CSS custom properties for tokens means the
 palette can be driven from the database at runtime, and the whole stylesheet is 6 kB gzipped.
+
+**The image fade-in is disabled for above-the-fold images.** A 500 ms opacity transition gated behind
+a React `onLoad` state update added 3.7 s of Largest Contentful Paint render delay — the single
+biggest performance problem in the build, and entirely self-inflicted. Lazy images keep the fade,
+since they are never the LCP element and the reserved aspect box already prevents layout shift.
+
+**The hero image is preloaded from the build-time snapshot.** A client-rendered app cannot let the
+browser discover its LCP image until React has parsed, executed and rendered — measured at 760 ms of
+pure discovery delay. A small Vite plugin reads the snapshot at build time and injects a
+`<link rel="preload" as="image">`, which took that to 0 ms. No snapshot simply means no hint.
+
+**Fonts load without blocking the first paint.** The Google Fonts stylesheet was blocking rendering
+for 1.39 s. Fetching it as `media="print"` and promoting it on load makes it non-blocking, with a
+`<noscript>` copy for JavaScript-disabled browsers.
+
+**One brand colour in, two out.** The admin has a single primary colour, but a blue chosen to look
+right on white measures 2.7:1 on near-black — a real WCAG failure that only appeared in dark mode.
+Rather than a second admin field, the colour is published as `--brand-light` and `--brand-dark`,
+with the dark variant lightened only as far as it must be to clear AA, and a companion `--on-brand`
+token that picks black or white for text sitting on a filled swatch.
+
+**robots.txt and sitemap.xml are generated, not committed.** The sitemap needs one entry per project
+and an absolute origin, neither of which is known until build time. The same script that fetches the
+cold-start snapshot writes both, and still writes them for the static routes when the API is asleep.
+
+**Tests do not see the cold-start snapshot by default.** `src/api/fallback.json` is generated, so its
+presence depended on whether anyone had run a build — which quietly changed what the component tests
+were exercising. The module is mocked to `null` in the shared setup, and one dedicated spec opts back
+in to test the cold-start path deliberately.

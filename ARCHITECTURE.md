@@ -161,6 +161,40 @@ Three tests are load-bearing for the project's central claims:
 - `follows a reordered section list without any code change` — the registry obeys the API.
 - `test_secret_never_appears_anywhere_in_the_raw_response` — private contact details do not leak.
 
+## Measured results
+
+Lighthouse against a production build (`vite preview`, snapshot baked in):
+
+| Category | Desktop | Mobile |
+|---|---|---|
+| Performance | **100** | **89** |
+| Accessibility | **100** | **100** |
+| Best Practices | **100** | **100** |
+| SEO | **100** | **100** |
+
+Core Web Vitals, desktop: FCP 0.5s, LCP 0.8s, TBT 0ms, CLS 0.002.
+
+The mobile Performance gap is the cost of client-side React under Lighthouse's simulated 4×-throttled
+CPU: with the hero preload in place, LCP load delay is 0ms and the remaining ~2.9s is JavaScript parse
+and execute before the hero element exists. Closing it fully would mean prerendering the app to static
+HTML. Two of the remaining mobile audits — "enable text compression" and "efficient cache policy" —
+are artefacts of `vite preview`; Vercel serves Brotli-compressed assets from the edge with the
+immutable caching declared in `vercel.json`.
+
+Two performance fixes came out of measuring rather than guessing:
+
+- The image fade-in gated the LCP element behind a React state update plus a 500ms CSS transition —
+  3.7s of render delay. Above-the-fold images now paint as they arrive; the fade is kept only for
+  lazy-loaded images, which are never the LCP element.
+- The `react` rule in `manualChunks` also matched `react-markdown`, quietly pulling the markdown
+  parser into the eagerly-preloaded vendor chunk.
+
+Accessibility is verified continuously, not just once: `e2e/accessibility.spec.ts` runs axe-core
+against every route in both themes and fails the build on any WCAG 2.1 AA violation. Three real
+violations were found and fixed this way — `--tone-faint` failed contrast in both themes, the brand
+colour from the admin was applied unchanged to a dark ground, and the project cover links had no
+accessible name.
+
 ## CI
 
 Five jobs: backend (ruff, mypy strict, migration completeness, pytest), **api-contract** (regenerate
