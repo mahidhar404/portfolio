@@ -1,0 +1,32 @@
+# Render blueprint: create the service from this file instead of clicking through
+# the dashboard. Secrets marked sync:false are entered once in the Render UI.
+services:
+  - type: web
+    name: portfolio-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false # e.g. portfolio-api.onrender.com
+      - key: DATABASE_URL
+        sync: false # the Neon connection string
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false # e.g. https://your-site.vercel.app
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false # same as above
+      - key: CORS_ALLOWED_ORIGIN_REGEXES
+        value: ^https://.*\.vercel\.app$
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

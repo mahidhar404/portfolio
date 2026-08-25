@@ -114,6 +114,10 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Opt into Django 6's behaviour now: a URL typed without a scheme becomes https,
+# not http. Removes a deprecation warning and is the right default anyway.
+FORMS_URLFIELD_ASSUME_HTTPS = True
+
 # --- Django REST Framework -------------------------------------------------
 # Read is public by default; every write endpoint opts in to IsAdminUser at the
 # viewset level. Token auth is what makes the Swagger "Authorize" button work.

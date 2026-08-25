@@ -8,6 +8,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    // e2e/ belongs to Playwright, which has its own runner and its own config.
+    exclude: ["node_modules/**", "dist/**", "e2e/**"],
     setupFiles: ["./src/test/setup.ts"],
     css: false,
     coverage: {

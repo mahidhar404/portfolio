@@ -1,0 +1,210 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DJANGO_SETTINGS_MODULE: config.settings.test
+
+jobs:
+  backend:
+    name: Backend — ruff, mypy, pytest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - run: uv sync --frozen
+      - name: Lint
+        run: uv run ruff check .
+      - name: Type-check (strict)
+        run: uv run mypy portfolio config tests
+      - name: Migrations are complete
+        run: uv run python manage.py makemigrations --check --dry-run
+      - name: Tests
+        run: uv run pytest --cov=portfolio --cov-report=term-missing --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage
+          path: backend/coverage.xml
+          if-no-files-found: ignore
+
+  api-contract:
+    name: API types have not drifted
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: uv sync --frozen
+        working-directory: backend
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+
+      # Regenerate the schema and types from the current models, then fail if
+      # what is committed differs. This is what stops the backend and frontend
+      # from silently drifting apart.
+      - name: Regenerate from the Django models
+        run: bash scripts/gen-api.sh
+        working-directory: frontend
+
+      - name: Fail if the committed types are stale
+        run: |
+          if ! git diff --exit-code -- frontend/src/api/schema.d.ts frontend/src/api/openapi.json; then
+            echo "::error::The API types are out of date. Run 'pnpm run gen:api' in frontend/ and commit the result."
+            exit 1
+          fi
+
+  frontend:
+    name: Frontend — eslint, tsc, vitest, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm run lint
+      - name: Formatting
+        run: pnpm run format:check
+      - name: Type-check
+        run: pnpm exec tsc -b --noEmit
+      - name: Tests
+        run: pnpm run test:coverage
+      - name: Production build
+        run: pnpm run build:only
+
+      - name: Enforce the bundle budget
+        run: |
+          node --input-type=module -e "
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { gzipSync } from 'node:zlib';
+          const html = readFileSync('dist/index.html', 'utf8');
+          const refs = [...new Set([...html.matchAll(/assets\/[A-Za-z0-9_.-]+\.js/g)].map(m => m[0]))];
+          const total = refs.reduce((sum, r) => sum + gzipSync(readFileSync('dist/' + r)).length, 0);
+          const kb = (total / 1024).toFixed(1);
+          console.log('Initial JS: ' + kb + ' kB gzipped across ' + refs.length + ' chunks');
+          if (total > 200 * 1024) {
+            console.error('::error::Initial JS budget exceeded: ' + kb + ' kB > 200 kB');
+            process.exit(1);
+          }
+          "
+
+  e2e:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: uv sync --frozen
+        working-directory: backend
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: frontend
+
+      - name: Start the API with demo content
+        working-directory: backend
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.dev
+          # Raised so the suite's own submissions are not rate-limited.
+          CONTACT_THROTTLE_RATE: 1000/hour
+        run: |
+          uv run python manage.py migrate --noinput
+          uv run python manage.py seed_demo --no-images
+          uv run python manage.py runserver 8000 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/api/health/ >/dev/null && break
+            sleep 1
+          done
+
+      - name: Run Playwright
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://127.0.0.1:8000
+        run: pnpm exec playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
+
+  docker:
+    name: Backend image builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: false
+          load: true
+          tags: portfolio-api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: The image actually starts and serves /api/health/
+        run: |
+          docker run -d --name api -p 8000:8000 \
+            -e DJANGO_SETTINGS_MODULE=config.settings.dev \
+            -e DJANGO_SECRET_KEY=ci-only-secret \
+            -e DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1 \
+            portfolio-api:ci
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/api/health/ >/dev/null && ok=1 && break
+            sleep 2
+          done
+          docker logs api
+          test "$ok" = "1"

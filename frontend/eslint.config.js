@@ -13,7 +13,7 @@ export default tseslint.config(
       ecmaVersion: 2022,
       globals: { ...globals.browser, ...globals.node },
       parserOptions: {
-        project: ["./tsconfig.app.json", "./tsconfig.node.json"],
+        project: ["./tsconfig.app.json", "./tsconfig.node.json", "./tsconfig.e2e.json"],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -39,7 +39,9 @@ export default tseslint.config(
   },
   {
     // Tests legitimately construct partial fixtures and poke at internals.
-    files: ["src/test/**/*.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
+    // Playwright's page.evaluate() returns `any` by design — it crosses a
+    // process boundary and cannot be typed from this side.
+    files: ["src/test/**/*.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}", "e2e/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",

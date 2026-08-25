@@ -82,3 +82,11 @@ DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
 addopts = "-q --strict-markers"
+filterwarnings = [
+    "error::DeprecationWarning",
+    # FORMS_URLFIELD_ASSUME_HTTPS opts into Django 6's behaviour early. The
+    # setting itself warns that it is transitional; delete both the setting in
+    # config/settings/base.py and this line when upgrading to Django 6.
+    "ignore:The FORMS_URLFIELD_ASSUME_HTTPS transitional setting is deprecated:DeprecationWarning",
+    "ignore::django.utils.deprecation.RemovedInDjango60Warning:django.conf",
+]

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    // Playwright specs run page.evaluate() callbacks in the browser, so they
+    // need the DOM lib even though the test file itself runs in Node.
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "types": ["node"]
+  },
+  "include": ["e2e/**/*.ts"]
+}
