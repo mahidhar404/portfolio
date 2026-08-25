@@ -24,7 +24,15 @@ export function ProjectCard({ project, eager = false }: { project: ProjectList; 
         "shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)]",
       )}
     >
-      <Link to={`/projects/${project.slug}`} className="block focus-visible:outline-offset-[-2px]">
+      {/* The cover is a convenience target for pointer users. The heading below
+          links to the same place, so this one is hidden from assistive tech and
+          removed from the tab order rather than duplicating the link. */}
+      <Link
+        to={`/projects/${project.slug}`}
+        aria-hidden="true"
+        tabIndex={-1}
+        className="block focus-visible:outline-offset-[-2px]"
+      >
         <Image
           src={project.cover_image}
           alt=""

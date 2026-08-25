@@ -129,7 +129,7 @@ export function ContactSection({ data, id, title, eyebrow }: SectionProps) {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {mutation.isPending ? t("contact.sending") : t("contact.send")}
           </button>

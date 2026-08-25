@@ -4,6 +4,15 @@ import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 import { server } from "./server";
 
+// The cold-start snapshot is a generated file that may or may not exist on the
+// machine running the tests, which would make every test that renders HomePage
+// behave differently depending on whether someone had run a build. Tests get no
+// snapshot by default; fallback.test.tsx opts back in explicitly.
+vi.mock("@/api/fallback", () => ({
+  fallbackPortfolio: null,
+  hasFallback: () => false,
+}));
+
 // jsdom implements neither of these, and several components depend on them.
 beforeAll(() => {
   vi.stubGlobal(

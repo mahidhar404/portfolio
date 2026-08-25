@@ -1,10 +1,49 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
+/**
+ * Preload the hero portrait.
+ *
+ * In a client-rendered app the browser cannot discover the LCP image until React
+ * has parsed, executed and rendered — measured at ~760ms of pure discovery delay.
+ * The build-time snapshot already knows the URL, so the preload hint is injected
+ * into index.html and the image starts downloading in parallel with the JavaScript.
+ *
+ * No snapshot (a fresh clone, or a build while the API is asleep) simply means no
+ * hint, and the page behaves exactly as before.
+ */
+function preloadHeroImage(): Plugin {
+  return {
+    name: "preload-hero-image",
+    transformIndexHtml: {
+      order: "pre",
+      handler(html) {
+        let photo: string | undefined;
+        try {
+          const snapshot = JSON.parse(
+            readFileSync(path.resolve(import.meta.dirname, "src/api/fallback.json"), "utf8"),
+          ) as { profile?: { photo?: string | null }; settings?: { show_photo?: boolean } };
+          if (snapshot.settings?.show_photo !== false) {
+            photo = snapshot.profile?.photo ?? undefined;
+          }
+        } catch {
+          return html;
+        }
+        if (!photo) return html;
+        return html.replace(
+          "</head>",
+          `  <link rel="preload" as="image" href="${photo}" fetchpriority="high" />\n  </head>`,
+        );
+      },
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), preloadHeroImage()],
   resolve: {
     alias: { "@": path.resolve(import.meta.dirname, "./src") },
   },

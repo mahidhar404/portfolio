@@ -10,7 +10,7 @@ export function LoadFailure({ error, onRetry }: { error: Error; onRetry: () => v
       <button
         type="button"
         onClick={onRetry}
-        className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white"
+        className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand"
       >
         {t("error.retry")}
       </button>

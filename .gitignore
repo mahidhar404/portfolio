@@ -21,7 +21,11 @@ dist/
 coverage/
 playwright-report/
 test-results/
+# Build artefacts: fetch-fallback.ts regenerates all three on every build, and
+# the sitemap needs the real deploy URL, which is only known at build time.
 /frontend/src/api/fallback.json
+/frontend/public/sitemap.xml
+/frontend/public/robots.txt
 
 # Env & secrets — never commit these
 .env
@@ -33,3 +37,4 @@ test-results/
 .idea/
 .vscode/
 *.swp
+*.jsonl

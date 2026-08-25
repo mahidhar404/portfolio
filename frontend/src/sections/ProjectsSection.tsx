@@ -92,7 +92,7 @@ function FilterButton({
       className={cn(
         "rounded-full border px-3 py-1 font-mono text-[11px] tracking-wide transition-colors",
         active
-          ? "border-brand bg-brand text-white"
+          ? "border-brand bg-brand text-on-brand"
           : "border-rule bg-surface text-muted hover:border-brand hover:text-ink",
       )}
     >

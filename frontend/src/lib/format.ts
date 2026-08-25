@@ -78,3 +78,22 @@ export function initials(name: string): string {
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
 }
+
+/**
+ * Build a responsive `srcset` for an image URL.
+ *
+ * In production, media is served by Cloudinary, whose URLs accept inline
+ * transformations — so a single stored image can be delivered at exactly the
+ * width the layout needs, in whatever format the browser prefers. For any other
+ * host (including local development) there is nothing to transform, so this
+ * returns undefined and the plain `src` is used unchanged.
+ */
+export function responsiveSrcSet(
+  url: string | undefined,
+  widths: number[] = [400, 800, 1200, 1600],
+): string | undefined {
+  if (!url || !url.includes("/upload/")) return undefined;
+  return widths
+    .map((width) => `${url.replace("/upload/", `/upload/f_auto,q_auto,w_${width}/`)} ${width}w`)
+    .join(", ");
+}

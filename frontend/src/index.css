@@ -22,19 +22,36 @@
   --color-rule: var(--tone-rule);
   --color-brand: var(--brand);
   --color-accent: var(--accent);
+  --color-on-brand: var(--on-brand);
 }
 
 :root {
-  /* Overwritten from the API — these are only the pre-hydration defaults. */
-  --brand: #1e4fd8;
-  --accent: #0ea5a4;
+  /* The -light and -dark variants are overwritten from the API at runtime (see
+     lib/useBrandColors.ts); these are only the pre-hydration defaults. The
+     theme blocks below choose between them, which an inline style on :root
+     could not do. */
+  --brand-light: #1e4fd8;
+  --brand-dark: #83a6ff;
+  --accent-light: #0e7f7e;
+  --accent-dark: #2fd4d2;
+
+  --on-brand-light: #ffffff;
+  --on-brand-dark: #0b0f15;
+
+  --brand: var(--brand-light);
+  --accent: var(--accent-light);
+  --on-brand: var(--on-brand-light);
 
   --tone-canvas: #f4f6f9;
   --tone-surface: #ffffff;
   --tone-raised: #eaeff5;
   --tone-ink: #10151d;
   --tone-muted: #55616f;
-  --tone-faint: #8593a4;
+  /* Every text tone clears WCAG AA (4.5:1) against all three backgrounds —
+     --tone-surface, --tone-canvas and --tone-raised — in both themes.
+     e2e/accessibility.spec.ts fails the build if that stops being true, so do
+     not lighten these without re-checking the ratios. */
+  --tone-faint: #5b6574;
   --tone-rule: #d9e0e9;
 
   --shadow-card: 0 1px 2px rgb(16 21 29 / 0.05), 0 10px 30px -20px rgb(16 21 29 / 0.35);
@@ -50,8 +67,12 @@
     --tone-raised: #1a222d;
     --tone-ink: #e7edf5;
     --tone-muted: #94a2b5;
-    --tone-faint: #66748a;
+    --tone-faint: #8290a3;
     --tone-rule: #222c39;
+
+    --brand: var(--brand-dark);
+    --accent: var(--accent-dark);
+    --on-brand: var(--on-brand-dark);
 
     --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 30px -20px rgb(0 0 0 / 0.9);
     --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.5), 0 18px 40px -24px rgb(0 0 0 / 1);
@@ -66,8 +87,12 @@
   --tone-raised: #1a222d;
   --tone-ink: #e7edf5;
   --tone-muted: #94a2b5;
-  --tone-faint: #66748a;
+  --tone-faint: #8290a3;
   --tone-rule: #222c39;
+
+  --brand: var(--brand-dark);
+  --accent: var(--accent-dark);
+  --on-brand: var(--on-brand-dark);
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 30px -20px rgb(0 0 0 / 0.9);
   --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.5), 0 18px 40px -24px rgb(0 0 0 / 1);

@@ -48,7 +48,7 @@ export function App() {
     <>
       <a
         href="#main"
-        className="sr-only rounded-md bg-brand px-4 py-2 text-white focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
+        className="sr-only rounded-md bg-brand px-4 py-2 text-on-brand focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
       >
         Skip to content
       </a>

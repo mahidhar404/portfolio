@@ -28,7 +28,7 @@ export function LocaleToggle() {
           onClick={() => choose(locale)}
           className={cn(
             "rounded-full px-2.5 py-1 font-mono text-[11px] uppercase transition-colors",
-            current === locale ? "bg-brand text-white" : "text-muted hover:text-ink",
+            current === locale ? "bg-brand text-on-brand" : "text-muted hover:text-ink",
           )}
         >
           {locale}

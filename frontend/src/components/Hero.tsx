@@ -59,7 +59,7 @@ export function Hero({ data }: { data: Portfolio }) {
                 href={mediaUrl(resume)}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand transition-opacity hover:opacity-90"
               >
                 {t("common.downloadResume")}
               </a>

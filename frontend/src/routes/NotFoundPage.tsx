@@ -14,7 +14,7 @@ export function NotFoundPage() {
       <p className="text-muted">{t("error.pageBody")}</p>
       <Link
         to="/"
-        className="mt-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white"
+        className="mt-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand"
       >
         {t("error.goHome")}
       </Link>

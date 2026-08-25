@@ -36,7 +36,7 @@ export function ResumePage() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand"
         >
           {t("resume.print")}
         </button>

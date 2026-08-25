@@ -33,7 +33,7 @@ export function ThemeToggle() {
           title={t(`theme.${option}`)}
           className={cn(
             "rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
-            theme === option ? "bg-brand text-white" : "text-muted hover:text-ink",
+            theme === option ? "bg-brand text-on-brand" : "text-muted hover:text-ink",
           )}
         >
           <span className="hidden sm:inline">{t(`theme.${option}`)}</span>

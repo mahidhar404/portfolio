@@ -107,8 +107,10 @@ jobs:
         run: pnpm exec tsc -b --noEmit
       - name: Tests
         run: pnpm run test:coverage
+      # The full build, not build:only — it also emits robots.txt, sitemap.xml
+      # and the cold-start snapshot. It tolerates the API being unreachable.
       - name: Production build
-        run: pnpm run build:only
+        run: pnpm run build
 
       - name: Enforce the bundle budget
         run: |

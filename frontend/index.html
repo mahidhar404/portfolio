@@ -8,10 +8,28 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Fonts load without blocking the first paint: the stylesheet is fetched with
+      media="print" (which the browser does not treat as render-blocking) and
+      promoted to all media once it arrives. `display=swap` means text is visible
+      in the fallback face immediately. The <noscript> copy keeps it working with
+      JavaScript disabled.
+    -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      media="print"
+      onload="
+        this.media = 'all';
+        this.onload = null;
+      "
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      />
+    </noscript>
 
     <title>Portfolio</title>
 
