@@ -1,0 +1,6 @@
+# These packages ship platform-specific native binaries and need their install
+# scripts to run. Everything else stays blocked by default.
+allowBuilds:
+  esbuild: true
+  msw: true
+  "@tailwindcss/oxide": true

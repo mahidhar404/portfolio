@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens.
+ *
+ * `--brand` and `--accent` are overwritten at runtime from SiteSettings, so the
+ * palette is admin-controlled like everything else. The rest of the scale is
+ * fixed: a cool, slightly blue-biased neutral ramp that reads as deliberate
+ * rather than default grey.
+ */
+@theme {
+  --font-display: "Newsreader", ui-serif, Georgia, serif;
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-ink: var(--tone-ink);
+  --color-muted: var(--tone-muted);
+  --color-faint: var(--tone-faint);
+  --color-canvas: var(--tone-canvas);
+  --color-surface: var(--tone-surface);
+  --color-raised: var(--tone-raised);
+  --color-rule: var(--tone-rule);
+  --color-brand: var(--brand);
+  --color-accent: var(--accent);
+}
+
+:root {
+  /* Overwritten from the API — these are only the pre-hydration defaults. */
+  --brand: #1e4fd8;
+  --accent: #0ea5a4;
+
+  --tone-canvas: #f4f6f9;
+  --tone-surface: #ffffff;
+  --tone-raised: #eaeff5;
+  --tone-ink: #10151d;
+  --tone-muted: #55616f;
+  --tone-faint: #8593a4;
+  --tone-rule: #d9e0e9;
+
+  --shadow-card: 0 1px 2px rgb(16 21 29 / 0.05), 0 10px 30px -20px rgb(16 21 29 / 0.35);
+  --shadow-lift: 0 2px 4px rgb(16 21 29 / 0.06), 0 18px 40px -24px rgb(16 21 29 / 0.45);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tone-canvas: #0b0f15;
+    --tone-surface: #121821;
+    --tone-raised: #1a222d;
+    --tone-ink: #e7edf5;
+    --tone-muted: #94a2b5;
+    --tone-faint: #66748a;
+    --tone-rule: #222c39;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 30px -20px rgb(0 0 0 / 0.9);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.5), 0 18px 40px -24px rgb(0 0 0 / 1);
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --tone-canvas: #0b0f15;
+  --tone-surface: #121821;
+  --tone-raised: #1a222d;
+  --tone-ink: #e7edf5;
+  --tone-muted: #94a2b5;
+  --tone-faint: #66748a;
+  --tone-rule: #222c39;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 30px -20px rgb(0 0 0 / 0.9);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.5), 0 18px 40px -24px rgb(0 0 0 / 1);
+
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--tone-canvas);
+  color: var(--tone-ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus is always visible — the site must be fully keyboard navigable. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--brand) 25%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Numeric columns line up. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Wide content scrolls inside its own box, never the page body. */
+.scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+/* --- Print: /resume renders as a clean one-page CV ------------------------ */
+@media print {
+  :root {
+    --tone-canvas: #ffffff;
+    --tone-surface: #ffffff;
+    --tone-raised: #ffffff;
+    --tone-ink: #000000;
+    --tone-muted: #333333;
+    --tone-rule: #cccccc;
+  }
+
+  body {
+    background: #fff;
+    font-size: 10.5pt;
+    line-height: 1.4;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}

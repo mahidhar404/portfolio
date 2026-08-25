@@ -12,6 +12,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from django.db import models
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from .models import (
@@ -40,14 +42,32 @@ from .models import (
 # Leaf serializers
 # ---------------------------------------------------------------------------
 
+class ReadSerializer[M: models.Model](serializers.ModelSerializer[M]):
+    """Base for output-only serializers.
 
-class SocialLinkSerializer(serializers.ModelSerializer[SocialLink]):
+    ModelSerializer marks a field ``required=False`` whenever the model field has
+    a default or allows blank. That is right for input and wrong for output: these
+    serializers only ever render responses, and every declared field is always
+    present. Without this, every property comes out optional in the OpenAPI schema
+    and therefore `T | undefined` in the generated TypeScript, which pushes a
+    pointless null check into every component.
+    """
+
+    def get_fields(self) -> dict[str, serializers.Field[Any, Any, Any, Any]]:
+        fields = super().get_fields()
+        for field in fields.values():
+            field.required = True
+        return fields
+
+
+
+class SocialLinkSerializer(ReadSerializer[SocialLink]):
     class Meta:
         model = SocialLink
         fields = ["id", "platform", "url", "icon", "order"]
 
 
-class SkillSerializer(serializers.ModelSerializer[Skill]):
+class SkillSerializer(ReadSerializer[Skill]):
     category_name = serializers.CharField(source="category.name", read_only=True, default=None)
 
     class Meta:
@@ -65,25 +85,26 @@ class SkillSerializer(serializers.ModelSerializer[Skill]):
         ]
 
 
-class SkillCategorySerializer(serializers.ModelSerializer[SkillCategory]):
+class SkillCategorySerializer(ReadSerializer[SkillCategory]):
     skills = serializers.SerializerMethodField()
 
     class Meta:
         model = SkillCategory
         fields = ["id", "name", "icon", "order", "skills"]
 
+    @extend_schema_field(SkillSerializer(many=True))
     def get_skills(self, obj: SkillCategory) -> Any:
         published = [skill for skill in obj.skills.all() if skill.is_published]
         return SkillSerializer(published, many=True, context=self.context).data
 
 
-class ExperienceHighlightSerializer(serializers.ModelSerializer[ExperienceHighlight]):
+class ExperienceHighlightSerializer(ReadSerializer[ExperienceHighlight]):
     class Meta:
         model = ExperienceHighlight
         fields = ["id", "text", "order"]
 
 
-class ExperienceSerializer(serializers.ModelSerializer[Experience]):
+class ExperienceSerializer(ReadSerializer[Experience]):
     highlights = ExperienceHighlightSerializer(many=True, read_only=True)
     skills = SkillSerializer(many=True, read_only=True)
     employment_type_display = serializers.CharField(
@@ -112,8 +133,9 @@ class ExperienceSerializer(serializers.ModelSerializer[Experience]):
         ]
 
 
-class EducationSerializer(serializers.ModelSerializer[Education]):
+class EducationSerializer(ReadSerializer[Education]):
     grade_scale_display = serializers.CharField(source="get_grade_scale_display", read_only=True)
+    coursework = serializers.ListField(child=serializers.CharField(), read_only=True)
 
     class Meta:
         model = Education
@@ -138,16 +160,17 @@ class EducationSerializer(serializers.ModelSerializer[Education]):
         ]
 
 
-class ProjectImageSerializer(serializers.ModelSerializer[ProjectImage]):
+class ProjectImageSerializer(ReadSerializer[ProjectImage]):
     class Meta:
         model = ProjectImage
         fields = ["id", "image", "caption", "order"]
 
 
-class ProjectListSerializer(serializers.ModelSerializer[Project]):
+class ProjectListSerializer(ReadSerializer[Project]):
     """The card shape — no case study, no gallery."""
 
     skills = SkillSerializer(many=True, read_only=True)
+    metrics = serializers.DictField(child=serializers.CharField(), read_only=True)
 
     class Meta:
         model = Project
@@ -178,7 +201,7 @@ class ProjectDetailSerializer(ProjectListSerializer):
         fields = [*ProjectListSerializer.Meta.fields, "description", "case_study", "images"]
 
 
-class CertificationSerializer(serializers.ModelSerializer[Certification]):
+class CertificationSerializer(ReadSerializer[Certification]):
     class Meta:
         model = Certification
         fields = [
@@ -194,19 +217,19 @@ class CertificationSerializer(serializers.ModelSerializer[Certification]):
         ]
 
 
-class PublicationSerializer(serializers.ModelSerializer[Publication]):
+class PublicationSerializer(ReadSerializer[Publication]):
     class Meta:
         model = Publication
         fields = ["id", "title", "authors", "venue", "date", "doi", "url", "abstract", "order"]
 
 
-class AwardSerializer(serializers.ModelSerializer[Award]):
+class AwardSerializer(ReadSerializer[Award]):
     class Meta:
         model = Award
         fields = ["id", "title", "issuer", "date", "description", "order"]
 
 
-class LanguageSerializer(serializers.ModelSerializer[Language]):
+class LanguageSerializer(ReadSerializer[Language]):
     level_display = serializers.CharField(source="get_level_display", read_only=True)
 
     class Meta:
@@ -214,7 +237,7 @@ class LanguageSerializer(serializers.ModelSerializer[Language]):
         fields = ["id", "name", "level", "level_display", "notes", "order"]
 
 
-class ReferenceSerializer(serializers.ModelSerializer[Reference]):
+class ReferenceSerializer(ReadSerializer[Reference]):
     """Contact details are withheld unless the reference is explicitly public.
 
     This is enforced here rather than in the view so that *every* code path that
@@ -239,14 +262,16 @@ class ReferenceSerializer(serializers.ModelSerializer[Reference]):
             "order",
         ]
 
+    @extend_schema_field(serializers.CharField())
     def get_email(self, obj: Reference) -> str:
         return obj.email if obj.is_public else ""
 
+    @extend_schema_field(serializers.CharField())
     def get_phone(self, obj: Reference) -> str:
         return obj.phone if obj.is_public else ""
 
 
-class VolunteeringSerializer(serializers.ModelSerializer[Volunteering]):
+class VolunteeringSerializer(ReadSerializer[Volunteering]):
     class Meta:
         model = Volunteering
         fields = [
@@ -261,13 +286,13 @@ class VolunteeringSerializer(serializers.ModelSerializer[Volunteering]):
         ]
 
 
-class InterestSerializer(serializers.ModelSerializer[Interest]):
+class InterestSerializer(ReadSerializer[Interest]):
     class Meta:
         model = Interest
         fields = ["id", "name", "icon", "order"]
 
 
-class TalkSerializer(serializers.ModelSerializer[Talk]):
+class TalkSerializer(ReadSerializer[Talk]):
     class Meta:
         model = Talk
         fields = ["id", "title", "event", "date", "url", "slides_url", "order"]
@@ -288,7 +313,7 @@ class SectionConfigSerializer(serializers.Serializer[dict[str, Any]]):
     label = serializers.CharField(allow_null=True, required=False)  # type: ignore[assignment]
 
 
-class SiteSettingsSerializer(serializers.ModelSerializer[SiteSettings]):
+class SiteSettingsSerializer(ReadSerializer[SiteSettings]):
     sections = SectionConfigSerializer(many=True, read_only=True)
 
     class Meta:
@@ -309,7 +334,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer[SiteSettings]):
         ]
 
 
-class ProfileSerializer(serializers.ModelSerializer[Profile]):
+class ProfileSerializer(ReadSerializer[Profile]):
     """Personal details are stripped unless SiteSettings.show_personal_details is on.
 
     The context carries the SiteSettings instance so this does not re-query.
