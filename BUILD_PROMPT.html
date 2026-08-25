@@ -1,0 +1,803 @@
+<title>Portfolio Build Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root{
+  --bg:#F1F4F8;
+  --surface:#FFFFFF;
+  --surface-2:#E9EEF5;
+  --ink:#121A26;
+  --muted:#586576;
+  --rule:#D6DEE9;
+  --accent:#1E4FD8;
+  --accent-soft:#E4EBFC;
+  --accent-ink:#1E4FD8;
+  --shadow:0 1px 2px rgba(18,26,38,.05), 0 8px 24px -16px rgba(18,26,38,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1017;
+    --surface:#141B24;
+    --surface-2:#1B242F;
+    --ink:#E4EAF3;
+    --muted:#93A2B6;
+    --rule:#232E3B;
+    --accent:#83A6FF;
+    --accent-soft:#16243E;
+    --accent-ink:#A7C0FF;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1017;
+  --surface:#141B24;
+  --surface-2:#1B242F;
+  --ink:#E4EAF3;
+  --muted:#93A2B6;
+  --rule:#232E3B;
+  --accent:#83A6FF;
+  --accent-soft:#16243E;
+  --accent-ink:#A7C0FF;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Serif","Iowan Old Style",Georgia,serif;
+  font-size:16.5px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.sans{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif}
+code,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.wrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 24px 96px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+}
+@media (min-width:1000px){
+  .wrap{grid-template-columns:210px minmax(0,1fr);column-gap:56px;align-items:start}
+  .masthead{grid-column:1 / -1}
+}
+
+/* ---------- masthead ---------- */
+.masthead{padding:64px 0 40px;border-bottom:1px solid var(--rule);margin-bottom:44px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent-ink);margin:0 0 18px;
+}
+h1{
+  font-size:clamp(2.1rem,5.2vw,3.35rem);line-height:1.04;letter-spacing:-.025em;
+  font-weight:600;margin:0 0 20px;text-wrap:balance;
+}
+.standfirst{
+  font-size:1.12rem;color:var(--muted);max-width:62ch;margin:0 0 32px;
+}
+.standfirst em{color:var(--ink);font-style:italic}
+
+.stackrow{display:grid;gap:12px;grid-template-columns:1fr;margin:0 0 30px}
+@media (min-width:660px){.stackrow{grid-template-columns:repeat(3,1fr)}}
+.node{
+  background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  padding:16px 18px;box-shadow:var(--shadow);position:relative;
+}
+.node .role{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);display:block;margin-bottom:7px;
+}
+.node .who{font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:1.02rem;display:block}
+.node .what{font-size:.9rem;color:var(--muted);display:block;margin-top:3px;line-height:1.45}
+.node.primary{border-color:var(--accent);background:var(--accent-soft)}
+.node.primary .who{color:var(--accent-ink)}
+
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button.copy{
+  font-family:"IBM Plex Sans",sans-serif;font-size:.92rem;font-weight:600;
+  background:var(--accent);color:#fff;border:1px solid transparent;border-radius:5px;
+  padding:11px 20px;cursor:pointer;transition:opacity .15s ease;
+}
+:root[data-theme="dark"] button.copy,
+:root:not([data-theme="light"]) button.copy{color:#0C1017}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) button.copy{color:#fff}}
+button.copy:hover{opacity:.86}
+button.copy:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.hint{font-size:.86rem;color:var(--muted)}
+
+#rawbox{
+  width:100%;height:150px;margin-top:14px;display:none;
+  font-family:"IBM Plex Mono",monospace;font-size:12px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:10px;
+}
+#rawbox.show{display:block}
+
+/* ---------- rail ---------- */
+nav.rail{display:none}
+@media (min-width:1000px){
+  nav.rail{
+    display:block;position:sticky;top:32px;
+    font-family:"IBM Plex Sans",sans-serif;font-size:.855rem;
+  }
+  nav.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+  nav.rail a{
+    display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:baseline;
+    padding:5px 8px;border-radius:4px;color:var(--muted);text-decoration:none;
+    border-left:2px solid transparent;transition:color .15s,background .15s;
+  }
+  nav.rail a .n{font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-variant-numeric:tabular-nums}
+  nav.rail a:hover{color:var(--ink);background:var(--surface-2)}
+  nav.rail a.on{color:var(--accent-ink);border-left-color:var(--accent);background:var(--accent-soft)}
+}
+
+/* ---------- body ---------- */
+main{min-width:0;max-width:74ch}
+section{padding:0 0 42px;scroll-margin-top:28px}
+h2{
+  font-size:1.42rem;font-weight:600;letter-spacing:-.015em;margin:0 0 16px;
+  display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:baseline;text-wrap:balance;
+}
+h2 .num{
+  font-family:"IBM Plex Mono",monospace;font-size:.82rem;font-weight:500;
+  color:var(--accent-ink);padding-top:2px;font-variant-numeric:tabular-nums;
+}
+h3{font-size:1rem;font-weight:600;margin:26px 0 8px;letter-spacing:-.005em}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+ol{margin:0 0 14px;padding-left:22px;display:flex;flex-direction:column;gap:7px}
+li{margin:0}
+strong{font-weight:600}
+code{
+  font-size:.855em;background:var(--surface-2);padding:1.5px 5px;border-radius:3px;
+  border:1px solid var(--rule);
+}
+pre{
+  background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  padding:16px 18px;overflow-x:auto;font-size:12.6px;line-height:1.6;margin:0 0 18px;
+  box-shadow:var(--shadow);
+}
+pre code{background:none;border:none;padding:0;font-size:inherit}
+
+.callout{
+  background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0;padding:16px 20px;margin:0 0 20px;
+}
+.callout p:last-child{margin-bottom:0}
+.callout .tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-ink);display:block;margin-bottom:8px;
+}
+
+hr.div{border:0;border-top:1px solid var(--rule);margin:0 0 44px}
+
+footer{
+  grid-column:1 / -1;border-top:1px solid var(--rule);margin-top:20px;padding-top:24px;
+  font-size:.88rem;color:var(--muted);
+}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;scroll-behavior:auto !important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Build brief · one paste, one repo</p>
+    <h1>Portfolio Build Brief</h1>
+    <p class="standfirst">
+      A React&nbsp;+&nbsp;TypeScript portfolio backed by a real Django database, live on Vercel, built so that
+      <em>the only thing left for you to do is type your resume into an admin panel.</em>
+      Paste this whole brief into a fresh Claude Code session in an empty repo.
+    </p>
+
+    <div class="stackrow">
+      <div class="node primary">
+        <span class="role">Frontend · your public link</span>
+        <span class="who">Vercel</span>
+        <span class="what">React 19, TypeScript, Vite. This is the URL that goes on LinkedIn.</span>
+      </div>
+      <div class="node">
+        <span class="role">Backend · API + admin</span>
+        <span class="who">Render</span>
+        <span class="what">Django 5 + DRF, Swagger at <code>/api/docs</code>, admin at <code>/admin</code>.</span>
+      </div>
+      <div class="node">
+        <span class="role">Database</span>
+        <span class="who">Neon</span>
+        <span class="what">Free Postgres. Every word on the site lives here.</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="copy" id="copybtn">Copy the full prompt</button>
+      <span class="hint" id="hint">Everything from “You are building my personal portfolio website” onward.</span>
+    </div>
+    <textarea id="rawbox" readonly aria-label="Raw prompt text"></textarea>
+  </header>
+
+  <nav class="rail" aria-label="Sections">
+    <ol>
+      <li><a href="#s0"><span class="n">00</span><span>Non-negotiable</span></a></li>
+      <li><a href="#s1"><span class="n">01</span><span>Stack</span></a></li>
+      <li><a href="#s2"><span class="n">02</span><span>Layout</span></a></li>
+      <li><a href="#s3"><span class="n">03</span><span>Data model</span></a></li>
+      <li><a href="#s4"><span class="n">04</span><span>API</span></a></li>
+      <li><a href="#s5"><span class="n">05</span><span>The contract</span></a></li>
+      <li><a href="#s6"><span class="n">06</span><span>Frontend</span></a></li>
+      <li><a href="#s7"><span class="n">07</span><span>Your data in</span></a></li>
+      <li><a href="#s8"><span class="n">08</span><span>Testing</span></a></li>
+      <li><a href="#s9"><span class="n">09</span><span>Deployment</span></a></li>
+      <li><a href="#s10"><span class="n">10</span><span>Docs</span></a></li>
+      <li><a href="#s11"><span class="n">11</span><span>Order of work</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="callout">
+      <span class="tag">Opening instruction</span>
+      <p>You are building my personal portfolio website from scratch in this empty repository. Read this entire
+      brief before writing any code, then work through the phases in order. I am a competent engineer but new to
+      parts of this stack — explain each significant decision in one or two plain sentences as you make it, and
+      keep a running <code>DECISIONS.md</code>.</p>
+    </div>
+
+    <section id="s0">
+      <h2><span class="num">00</span><span>The one non-negotiable</span></h2>
+      <p>Every single piece of content on the front end comes from the database via the API. There is no
+      hard-coded copy in a React component — not a heading, not a bio line, not a project title. My only job
+      after this is built is to enter my data. If a change to my resume would require a code change, the design
+      is wrong.</p>
+    </section>
+
+    <section id="s1">
+      <h2><span class="num">01</span><span>Stack</span></h2>
+      <h3>Frontend (deployed to Vercel)</h3>
+      <ul>
+        <li>React 19 + TypeScript in <code>strict</code> mode, Vite build</li>
+        <li>React Router v7 (data router APIs), TanStack Query v5 for server state</li>
+        <li>Tailwind CSS v4, shadcn/ui-style primitives (Radix under the hood), Framer Motion for animation</li>
+        <li>Zod to validate API responses at the boundary</li>
+        <li><code>openapi-typescript</code> to generate TS types directly from the backend's OpenAPI schema</li>
+      </ul>
+      <h3>Backend (deployed to Render)</h3>
+      <ul>
+        <li>Django 5.x + Django REST Framework</li>
+        <li><code>drf-spectacular</code> for OpenAPI 3 schema + Swagger UI + ReDoc</li>
+        <li><code>django-cors-headers</code>, <code>dj-database-url</code>, <code>whitenoise</code>, <code>gunicorn</code></li>
+        <li><code>Pillow</code> for images; Cloudinary (free tier) via <code>django-storages</code> for uploaded media,
+        because Render's filesystem is ephemeral</li>
+        <li>Postgres (Neon free tier) in production, SQLite locally so a clean clone runs with zero setup</li>
+      </ul>
+      <p><strong>Tooling:</strong> <code>uv</code> for Python deps, <code>pnpm</code> for JS. Ruff + mypy (strict) +
+      pytest-django on the backend; ESLint + Prettier + <code>tsc --noEmit</code> + Vitest on the frontend.</p>
+    </section>
+
+    <section id="s2">
+      <h2><span class="num">02</span><span>Repository layout</span></h2>
+<pre><code>portfolio-site/
+├── backend/
+│   ├── config/                 # settings/{base,dev,prod}.py, urls.py, wsgi.py
+│   ├── portfolio/              # the single app: models, serializers, views, admin, filters
+│   │   ├── management/commands/seed_demo.py
+│   │   └── management/commands/import_resume.py
+│   ├── tests/
+│   ├── pyproject.toml
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── api/                # generated types + typed client + query hooks
+│   │   ├── components/         # ui/ primitives + shared
+│   │   ├── sections/           # one component per resume section
+│   │   ├── routes/
+│   │   ├── lib/
+│   │   └── styles/
+│   ├── public/
+│   └── package.json
+├── docker-compose.yml          # api + db + frontend, one command local dev
+├── .github/workflows/ci.yml
+└── README.md</code></pre>
+    </section>
+
+    <section id="s3">
+      <h2><span class="num">03</span><span>Data model — the superset</span></h2>
+      <p>Design these as Django models with <code>created_at</code>/<code>updated_at</code> on every one, and an
+      <code>is_published</code> boolean plus integer <code>order</code> field on every list-type model so I can hide
+      and reorder anything from the admin without a deploy.</p>
+
+      <h3>Singletons (enforce exactly one row)</h3>
+      <ul>
+        <li><code>SiteSettings</code> — site title, meta description, OG image, primary/accent colour, default locale
+        (<code>en</code>/<code>de</code>), analytics id, a <code>sections</code> config controlling which sections
+        appear and in what order, feature flags (<code>show_photo</code>, <code>show_personal_details</code>,
+        <code>show_references</code>, <code>show_hobbies</code>).</li>
+        <li><code>Profile</code> — full name, headline, tagline, professional summary (short + long, Markdown), photo,
+        date of birth, place of birth, nationality, marital status, current city, country, relocation willingness,
+        work authorisation note, email, phone, availability status, years of experience, resume PDF (EN), resume PDF (DE).
+        The personal-details block is German-CV convention — every field individually nullable and gated by the
+        <code>show_personal_details</code> flag, because I won't show those to every audience.</li>
+      </ul>
+
+      <h3>Collections</h3>
+      <ul>
+        <li><code>SocialLink</code> — platform, url, icon key, order</li>
+        <li><code>Experience</code> — company, company logo, company url, role, employment type
+        (full-time/contract/intern/working-student), location, remote flag, start date, end date,
+        <code>is_current</code>, description (Markdown), M2M to <code>Skill</code></li>
+        <li><code>ExperienceHighlight</code> — FK to Experience, text, order (the bullet points, as rows so they're
+        individually editable)</li>
+        <li><code>Education</code> — institution, logo, degree, field of study, <code>grade_value</code> +
+        <code>grade_scale</code> (choices: <code>cgpa_10</code>, <code>percentage</code>, <code>gpa_4</code>,
+        <code>german_1_5</code>, <code>ects</code>) so both an Indian 8.7 CGPA and a German 1.7 render correctly,
+        start/end, location, thesis title, thesis url, coursework (array), description</li>
+        <li><code>SkillCategory</code> and <code>Skill</code> — name, category FK, proficiency 1–5, years of
+        experience, <code>is_featured</code>, icon key</li>
+        <li><code>Project</code> — title, slug, one-line summary, full description (Markdown), my role, start/end,
+        cover image, M2M to <code>Skill</code>, repo url, live url, <code>is_featured</code>, <code>metrics</code>
+        (JSON, e.g. <code>{"latency": "-40%"}</code>), case-study body</li>
+        <li><code>ProjectImage</code> — FK to Project, image, caption, order</li>
+        <li><code>Certification</code> — name, issuer, issuer logo, issue date, expiry date, credential id, credential url</li>
+        <li><code>Publication</code> — title, authors, venue, date, DOI, url, abstract</li>
+        <li><code>Award</code> — title, issuer, date, description</li>
+        <li><code>Language</code> — name, CEFR level (<code>A1</code>–<code>C2</code>, plus <code>native</code>), notes
+        — required for German CVs</li>
+        <li><code>Reference</code> — name, role, company, relationship, email, phone, <code>is_public</code>
+        (default False; never serialise contact details unless explicitly public) — also a German CV convention</li>
+        <li><code>Volunteering</code> — organisation, role, start/end, description</li>
+        <li><code>Interest</code> — name, icon key</li>
+        <li><code>Talk</code> — title, event, date, url, slides url</li>
+        <li><code>ContactMessage</code> — name, email, subject, message, ip, user agent, created_at,
+        <code>is_read</code> (write-only from the public form, readable only in admin)</li>
+      </ul>
+      <p>Ship a real migration set. <code>python manage.py migrate</code> on a clean clone must work first try.</p>
+    </section>
+
+    <section id="s4">
+      <h2><span class="num">04</span><span>API design</span></h2>
+      <p>Version everything under <code>/api/v1/</code>.</p>
+      <ul>
+        <li><strong><code>GET /api/v1/portfolio/</code></strong> — the aggregate endpoint. One request returns the
+        entire published site payload: settings, profile, and every enabled section in
+        <code>SiteSettings.sections</code> order. This is what makes the site feel instant — the whole page paints
+        from a single round trip. Use <code>select_related</code>/<code>prefetch_related</code> so it's a handful of
+        queries, not N+1, and assert the query count in a test.</li>
+        <li><strong>Granular read endpoints</strong> for detail pages and future use: <code>/api/v1/projects/</code>,
+        <code>/api/v1/projects/{slug}/</code>, <code>/api/v1/experience/</code>, <code>/api/v1/skills/</code>, etc.
+        Filterable (<code>django-filter</code>) and paginated.</li>
+        <li><strong><code>POST /api/v1/contact/</code></strong> — public, throttled to 5/hour per IP, honeypot field,
+        server-side validation.</li>
+        <li><strong>Write endpoints</strong> for every model, <code>IsAdminUser</code> + token auth, so I can inject
+        data from Swagger.</li>
+        <li><strong><code>GET /api/schema/</code></strong>, <strong><code>/api/docs/</code></strong> (Swagger UI),
+        <strong><code>/api/redoc/</code></strong>.</li>
+      </ul>
+      <p><strong>Caching and freshness:</strong> compute an ETag from <code>MAX(updated_at)</code> across all content
+      models; return <code>304 Not Modified</code> when the client's ETag matches. Public GETs get
+      <code>Cache-Control: public, max-age=60, stale-while-revalidate=600</code>.</p>
+      <p><strong>Serializers:</strong> explicit field lists, never <code>fields = "__all__"</code>. Read serializers
+      separate from write serializers. Never expose <code>Reference</code> contact fields when
+      <code>is_public=False</code> — write a test that proves it.</p>
+    </section>
+
+    <section id="s5">
+      <h2><span class="num">05</span><span>The backend → frontend contract</span></h2>
+      <p>Do this properly; it's the heart of the request. The Django models are the single source of truth, and the
+      types flow downhill automatically:</p>
+      <ol>
+        <li><code>drf-spectacular</code> generates <code>openapi.json</code> from the serializers.</li>
+        <li><code>pnpm run gen:api</code> runs <code>openapi-typescript</code> over that schema into
+        <code>frontend/src/api/schema.d.ts</code>.</li>
+        <li>A thin typed <code>fetchApi&lt;T&gt;()</code> wrapper plus TanStack Query hooks
+        (<code>usePortfolio()</code>, <code>useProject(slug)</code>) consume those generated types.</li>
+        <li>Zod schemas mirror the critical shapes and validate at runtime, so a backend change that breaks the
+        contract fails loudly in dev instead of rendering <code>undefined</code>.</li>
+        <li><strong>CI check:</strong> regenerate the schema and the TS types, and fail the build if the committed
+        files differ. This is what guarantees the two halves can never silently drift.</li>
+      </ol>
+      <p>Hand-writing an API interface in the frontend is forbidden. Every API type is generated.</p>
+    </section>
+
+    <section id="s6">
+      <h2><span class="num">06</span><span>Frontend architecture</span></h2>
+      <p><strong>Data-driven sections.</strong> The backend sends section order and enabled flags; the frontend holds
+      a registry <code>Record&lt;SectionKey, ComponentType&lt;SectionProps&gt;&gt;</code> and renders in the order
+      it's told. Adding a new resume section later = add a model + register one component. No layout code changes.</p>
+      <p><strong>Routes:</strong> <code>/</code> (single-page scroll composition of all sections),
+      <code>/projects</code>, <code>/projects/:slug</code> (full case study), <code>/experience</code>,
+      <code>/about</code>, <code>/contact</code>, <code>/resume</code> (print-optimised CV view), <code>*</code> (404).</p>
+
+      <h3>Interactivity — make it feel expensive</h3>
+      <ul>
+        <li>Sticky nav with scroll-spy that tracks the active section</li>
+        <li>Command palette (⌘K) for jump-to-section and project search</li>
+        <li>Dark/light/system theme, persisted, no flash of wrong theme on load</li>
+        <li>Project grid filterable by tech stack with animated layout transitions</li>
+        <li>Experience rendered as an animated vertical timeline</li>
+        <li>Skills as animated proficiency bars grouped by category</li>
+        <li>Language proficiency as CEFR level indicators</li>
+        <li>EN/DE language toggle (<code>react-i18next</code>) — UI strings from translation files, content from the
+        API's locale fields</li>
+        <li><code>/resume</code> renders a clean one-page CV with <code>@media print</code> rules, plus a download
+        button for the PDF from <code>Profile</code></li>
+        <li>Every animation respects <code>prefers-reduced-motion</code></li>
+      </ul>
+
+      <h3>Quality bar — the "as smooth as Meta" part</h3>
+      <ul>
+        <li>Route-level code splitting; initial JS bundle under 200&nbsp;KB gzipped</li>
+        <li>Skeleton loaders sized to the real content, so there is zero cumulative layout shift</li>
+        <li>Images: explicit width/height, <code>loading="lazy"</code>, responsive <code>srcset</code>, blur-up placeholder</li>
+        <li>Error boundaries per section — one failing section never blanks the page</li>
+        <li>Full keyboard navigation, visible focus rings, semantic landmarks, WCAG 2.1 AA contrast, tested with <code>axe</code></li>
+        <li>SEO: per-route meta + Open Graph tags, JSON-LD <code>Person</code> + <code>WebSite</code> schema,
+        <code>sitemap.xml</code>, <code>robots.txt</code></li>
+        <li>Target Lighthouse ≥ 95 on all four categories; report the actual scores when you're done</li>
+      </ul>
+
+      <div class="callout">
+        <span class="tag">Cold-start insurance — don't skip</span>
+        <p>Render's free tier sleeps after inactivity and can take ~50 seconds to wake. A recruiter must never hit a
+        loading spinner. So:</p>
+        <ol>
+          <li>At Vercel build time, fetch <code>/api/v1/portfolio/</code> and write the response to
+          <code>src/api/fallback.json</code>.</li>
+          <li>The app renders from <code>fallback.json</code> immediately, then revalidates against the live API and
+          swaps in fresh data when it arrives.</li>
+          <li>Add a GitHub Actions cron job that pings the backend health endpoint every 10 minutes to keep it warm.</li>
+          <li>Add a Vercel deploy hook, and document how to trigger a rebuild after I update content.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="s7">
+      <h2><span class="num">07</span><span>Getting my data in</span></h2>
+      <h3>Primary path — Django admin</h3>
+      <p>Invest real effort here; this is the interface I'll actually live in.</p>
+      <ul>
+        <li>Custom <code>ModelAdmin</code> for every model: sensible <code>list_display</code>,
+        <code>list_filter</code>, <code>search_fields</code>, <code>list_editable</code> for the <code>order</code>
+        field, inlines for <code>ExperienceHighlight</code> and <code>ProjectImage</code>, image thumbnail previews,
+        drag-to-reorder via <code>django-admin-sortable2</code></li>
+        <li>Group models into logical admin sections with clear labels</li>
+        <li>Add a "View on site" link and a "Preview" button on the singletons</li>
+        <li>Style it minimally with <code>django-admin-interface</code> or a small custom CSS override so it isn't ugly</li>
+      </ul>
+
+      <h3>Secondary — Swagger</h3>
+      <p><code>/api/docs/</code> with a working "Authorize" button. Every write endpoint documented with a realistic
+      request example. Authenticate with a token, POST/PUT any section, done.</p>
+
+      <h3>Bulk load — <code>manage.py import_resume path/to/resume.json</code></h3>
+      <p>Takes one JSON document containing my entire resume, validates it against a published JSON Schema (write
+      that schema to <code>docs/resume.schema.json</code>), and upserts idempotently — running it twice must not
+      duplicate rows. Include <code>docs/resume.example.json</code>, fully filled in, as the template I'll copy.</p>
+
+      <h3>Demo data — <code>manage.py seed_demo</code></h3>
+      <p>Creates a complete fictional-but-plausible senior-engineer persona: 2 educations, 4 roles with bullets,
+      6 projects with images, 30 skills across 6 categories, 4 certifications, 3 languages, 2 awards, 1 publication,
+      hobbies, social links. Placeholder images generated locally or pulled from a public placeholder service at seed
+      time. Include <code>--clear</code> to wipe and reseed. The site must look finished and impressive on first run.</p>
+    </section>
+
+    <section id="s8">
+      <h2><span class="num">08</span><span>Testing</span></h2>
+      <p><strong>Backend</strong> (<code>pytest-django</code> + <code>factory_boy</code>): model constraints and
+      singleton enforcement; serializer output shape; the aggregate endpoint's query count; permission tests proving
+      anonymous users cannot write and cannot read non-public references; contact form throttling;
+      <code>import_resume</code> idempotency.</p>
+      <p><strong>Frontend</strong> (Vitest + React Testing Library + MSW): section components render from fixture
+      data; empty and error states; the section registry renders in the order the API dictates; theme toggle
+      persistence.</p>
+      <p><strong>E2E</strong> (Playwright): load the home page against a seeded backend, assert every section
+      renders, navigate to a project detail page, submit the contact form, toggle theme and language.</p>
+      <p><strong>CI</strong> (GitHub Actions): ruff, mypy strict, pytest with coverage, eslint,
+      <code>tsc --noEmit</code>, vitest, the API-types drift check, and a production build of both apps. All green
+      before deploy.</p>
+    </section>
+
+    <section id="s9">
+      <h2><span class="num">09</span><span>Deployment</span></h2>
+      <ul>
+        <li><strong>Frontend → Vercel.</strong> <code>frontend/</code> as root directory, <code>VITE_API_URL</code>
+        env var, SPA rewrite rule so deep links work on refresh.</li>
+        <li><strong>Backend → Render.</strong> Web service from <code>backend/Dockerfile</code>,
+        <code>gunicorn config.wsgi</code>, non-root user, health check at <code>/api/health/</code>, build command
+        running <code>migrate</code> and <code>collectstatic</code>.</li>
+        <li><strong>Database → Neon.</strong> Free Postgres, connection string via <code>DATABASE_URL</code>.</li>
+        <li><strong>Media → Cloudinary.</strong> Free tier, credentials via env.</li>
+        <li><strong>Security:</strong> <code>DEBUG=False</code> in prod, <code>SECRET_KEY</code> from env, correct
+        <code>ALLOWED_HOSTS</code> and <code>CSRF_TRUSTED_ORIGINS</code>, CORS limited to the Vercel domains only,
+        HSTS and secure cookies on, no secret ever committed. Provide <code>.env.example</code> for both apps.</li>
+      </ul>
+    </section>
+
+    <section id="s10">
+      <h2><span class="num">10</span><span>Documentation</span></h2>
+      <p><code>README.md</code> must let me go from clone to live without asking you anything:</p>
+      <ul>
+        <li>5-minute local setup (or <code>docker compose up</code>)</li>
+        <li>Every environment variable, what it does, where to get its value</li>
+        <li>Step-by-step first deploy for Vercel, Render, Neon, Cloudinary — including where to click</li>
+        <li><strong>"Replacing the demo data with mine"</strong> — the exact workflow: create superuser, log into
+        <code>/admin</code>, fill each section in order, or run <code>import_resume</code> with my JSON</li>
+        <li>How to add a brand-new resume section later (model → serializer → admin → regenerate types → register
+        component)</li>
+        <li>Custom domain setup and how to point it at Vercel</li>
+      </ul>
+      <p>Also write <code>ARCHITECTURE.md</code> (component map, request lifecycle, the type-generation pipeline) and
+      <code>DECISIONS.md</code> (each significant choice and its one-line rationale).</p>
+    </section>
+
+    <section id="s11">
+      <h2><span class="num">11</span><span>How to work</span></h2>
+      <p>Build in this order, and pause at the end of each phase to show me what's running before continuing:</p>
+      <ol>
+        <li>Repo scaffold, tooling, CI skeleton, <code>docker compose up</code> works</li>
+        <li>Models + migrations + a genuinely good admin + <code>seed_demo</code></li>
+        <li>Serializers, viewsets, aggregate endpoint, Swagger, backend tests green</li>
+        <li>Type generation pipeline + typed client + query hooks + drift check</li>
+        <li>Layout shell, routing, theme, and every section component rendering real API data</li>
+        <li>Interactivity, animation, i18n, print view, performance and accessibility pass</li>
+        <li>Frontend and E2E tests green</li>
+        <li>Deploy all three services, verify the live URL end to end</li>
+        <li>Documentation</li>
+      </ol>
+      <p>At every phase: strict typing, no <code>any</code>, no <code>&#35; type: ignore</code> without a reason
+      comment, tests alongside the code rather than bolted on at the end. When you finish, give me the live URL, the
+      admin URL, the Swagger URL, the actual Lighthouse scores, and a numbered checklist of exactly what I do to swap
+      in my real information.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    Paste the prompt into a fresh Claude Code session started in an empty repo. The local copy lives at
+    <code>~/Desktop/portfolio-site/BUILD_PROMPT.md</code>.
+  </footer>
+</div>
+
+<script type="text/plain" id="raw-prompt">You are building my personal portfolio website from scratch in this empty repository. Read this entire brief before writing any code, then work through the phases in order. I am a competent engineer but new to parts of this stack — explain each significant decision in one or two plain sentences as you make it, and keep a running `DECISIONS.md`.
+
+## 0. The one non-negotiable
+
+Every single piece of content on the front end comes from the database via the API. There is no hard-coded copy in a React component — not a heading, not a bio line, not a project title. My only job after this is built is to enter my data. If a change to my resume would require a code change, the design is wrong.
+
+## 1. Stack
+
+**Frontend** (deployed to Vercel):
+- React 19 + TypeScript in `strict` mode, Vite build
+- React Router v7 (data router APIs), TanStack Query v5 for server state
+- Tailwind CSS v4, shadcn/ui-style primitives (Radix under the hood), Framer Motion for animation
+- Zod to validate API responses at the boundary
+- `openapi-typescript` to generate TS types directly from the backend's OpenAPI schema
+
+**Backend** (deployed to Render):
+- Django 5.x + Django REST Framework
+- `drf-spectacular` for OpenAPI 3 schema + Swagger UI + ReDoc
+- `django-cors-headers`, `dj-database-url`, `whitenoise`, `gunicorn`
+- `Pillow` for images; Cloudinary (free tier) via `django-storages` for user-uploaded media, because Render's filesystem is ephemeral
+- Postgres (Neon free tier) in production, SQLite locally so a clean clone runs with zero setup
+
+**Tooling:** `uv` for Python deps, `pnpm` for JS. Ruff + mypy (strict) + pytest-django on the backend; ESLint + Prettier + `tsc --noEmit` + Vitest on the frontend.
+
+## 2. Repository layout
+
+```
+portfolio-site/
+├── backend/
+│   ├── config/                 # settings/{base,dev,prod}.py, urls.py, wsgi.py
+│   ├── portfolio/              # the single app: models, serializers, views, admin, filters
+│   │   ├── management/commands/seed_demo.py
+│   │   └── management/commands/import_resume.py
+│   ├── tests/
+│   ├── pyproject.toml
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── api/                # generated types + typed client + query hooks
+│   │   ├── components/         # ui/ primitives + shared
+│   │   ├── sections/           # one component per resume section
+│   │   ├── routes/
+│   │   ├── lib/
+│   │   └── styles/
+│   ├── public/
+│   └── package.json
+├── docker-compose.yml          # api + db + frontend, one command local dev
+├── .github/workflows/ci.yml
+└── README.md
+```
+
+## 3. Data model — the superset
+
+Design these as Django models with `created_at`/`updated_at` on every one, and an `is_published` boolean plus integer `order` field on every list-type model so I can hide and reorder anything from the admin without a deploy.
+
+**Singletons** (enforce exactly one row):
+- `SiteSettings` — site title, meta description, OG image, primary/accent colour, default locale (`en`/`de`), Google Analytics/Plausible id, `sections` config controlling which sections appear and in what order, feature flags (`show_photo`, `show_personal_details`, `show_references`, `show_hobbies`).
+- `Profile` — full name, headline, tagline, professional summary (short + long, Markdown), photo, date of birth, place of birth, nationality, marital status, current city, country, relocation willingness, work authorisation note, email, phone, availability status, years of experience, resume PDF (EN), resume PDF (DE). The personal-details block is German-CV convention — every field individually nullable and gated by the `show_personal_details` flag, because I won't show those to every audience.
+
+**Collections:**
+- `SocialLink` — platform, url, icon key, order
+- `Experience` — company, company logo, company url, role, employment type (full-time/contract/intern/working-student), location, remote flag, start date, end date, `is_current`, description (Markdown), M2M to `Skill`
+- `ExperienceHighlight` — FK to Experience, text, order (the bullet points, as rows so they're individually editable)
+- `Education` — institution, logo, degree, field of study, `grade_value` + `grade_scale` (choices: `cgpa_10`, `percentage`, `gpa_4`, `german_1_5`, `ects`) so both an Indian 8.7 CGPA and a German 1.7 render correctly, start/end, location, thesis title, thesis url, coursework (array), description
+- `SkillCategory` and `Skill` — name, category FK, proficiency 1–5, years of experience, `is_featured`, icon key
+- `Project` — title, slug, one-line summary, full description (Markdown), my role, start/end, cover image, M2M to `Skill`, repo url, live url, `is_featured`, `metrics` (JSON: e.g. {"latency": "-40%"}), case-study body
+- `ProjectImage` — FK to Project, image, caption, order
+- `Certification` — name, issuer, issuer logo, issue date, expiry date, credential id, credential url
+- `Publication` — title, authors, venue, date, DOI, url, abstract
+- `Award` — title, issuer, date, description
+- `Language` — name, CEFR level (`A1`–`C2`, plus `native`), notes — required for German CVs
+- `Reference` — name, role, company, relationship, email, phone, `is_public` (default False; never serialise contact details unless explicitly public) — also a German CV convention
+- `Volunteering` — organisation, role, start/end, description
+- `Interest` — name, icon key
+- `Talk` — title, event, date, url, slides url
+- `ContactMessage` — name, email, subject, message, ip, user agent, created_at, `is_read` (write-only from the public form, readable only in admin)
+
+Ship a real migration set. `python manage.py migrate` on a clean clone must work first try.
+
+## 4. API design
+
+Version everything under `/api/v1/`.
+
+- **`GET /api/v1/portfolio/`** — the aggregate endpoint. One request returns the entire published site payload: settings, profile, and every enabled section in `SiteSettings.sections` order. This is what makes the site feel instant — the whole page paints from a single round trip. Use `select_related`/`prefetch_related` so it's a handful of queries, not N+1, and assert the query count in a test.
+- **Granular read endpoints** for detail pages and future use: `/api/v1/projects/`, `/api/v1/projects/{slug}/`, `/api/v1/experience/`, `/api/v1/skills/`, etc. Filterable (`django-filter`) and paginated.
+- **`POST /api/v1/contact/`** — public, throttled to 5/hour per IP, honeypot field, server-side validation.
+- **Write endpoints** for every model, `IsAdminUser` + token auth, so I can inject data from Swagger.
+- **`GET /api/schema/`**, **`/api/docs/`** (Swagger UI), **`/api/redoc/`**.
+
+**Caching and freshness:** compute an ETag from `MAX(updated_at)` across all content models; return `304 Not Modified` when the client's ETag matches. Public GETs get `Cache-Control: public, max-age=60, stale-while-revalidate=600`.
+
+**Serializers:** explicit field lists, never `fields = "__all__"`. Read serializers separate from write serializers. Never expose `Reference` contact fields when `is_public=False` — write a test that proves it.
+
+## 5. The backend→frontend contract (do this properly, it's the heart of the request)
+
+The Django models are the single source of truth, and the types flow downhill automatically:
+
+1. `drf-spectacular` generates `openapi.json` from the serializers.
+2. `pnpm run gen:api` runs `openapi-typescript` over that schema into `frontend/src/api/schema.d.ts`.
+3. A thin typed `fetchApi<T>()` wrapper plus TanStack Query hooks (`usePortfolio()`, `useProject(slug)`) consume those generated types.
+4. Zod schemas mirror the critical shapes and validate at runtime, so a backend change that breaks the contract fails loudly in dev instead of rendering `undefined`.
+5. **CI check:** regenerate the schema and the TS types, and fail the build if the committed files differ. This is what guarantees the two halves can never silently drift.
+
+Hand-writing an API interface in the frontend is forbidden. Every API type is generated.
+
+## 6. Frontend architecture
+
+**Data-driven sections.** The backend sends section order and enabled flags; the frontend holds a registry `Record<SectionKey, ComponentType<SectionProps>>` and renders in the order it's told. Adding a new resume section later = add a model + register one component. No layout code changes.
+
+**Routes:** `/` (single-page scroll composition of all sections), `/projects`, `/projects/:slug` (full case study), `/experience`, `/about`, `/contact`, `/resume` (print-optimised CV view), `*` (404).
+
+**Interactivity — make it feel expensive:**
+- Sticky nav with scroll-spy that tracks the active section
+- Command palette (⌘K) for jump-to-section and project search
+- Dark/light/system theme, persisted, no flash of wrong theme on load
+- Project grid filterable by tech stack with animated layout transitions
+- Experience rendered as an animated vertical timeline
+- Skills as animated proficiency bars grouped by category
+- Language proficiency as CEFR level indicators
+- EN/DE language toggle (`react-i18next`) — UI strings from translation files, content from the API's locale fields
+- `/resume` renders a clean one-page CV with `@media print` rules, plus a download button for the PDF from `Profile`
+- Every animation respects `prefers-reduced-motion`
+
+**Quality bar — this is the "as smooth as Meta" part:**
+- Route-level code splitting; initial JS bundle under 200 KB gzipped
+- Skeleton loaders sized to the real content, so there is zero cumulative layout shift
+- Images: explicit width/height, `loading="lazy"`, responsive `srcset`, blur-up placeholder
+- Error boundaries per section — one failing section never blanks the page
+- Full keyboard navigation, visible focus rings, semantic landmarks, WCAG 2.1 AA contrast, tested with `axe`
+- SEO: per-route meta + Open Graph tags, JSON-LD `Person` + `WebSite` schema, `sitemap.xml`, `robots.txt`
+- Target Lighthouse ≥ 95 on all four categories; report the actual scores when you're done
+
+**Cold-start insurance (important, don't skip):** Render's free tier sleeps after inactivity and can take ~50 seconds to wake. A recruiter must never hit a loading spinner. So:
+1. At Vercel build time, fetch `/api/v1/portfolio/` and write the response to `src/api/fallback.json`.
+2. The app renders from `fallback.json` immediately, then revalidates against the live API and swaps in fresh data when it arrives.
+3. Add a GitHub Actions cron job that pings the backend health endpoint every 10 minutes to keep it warm.
+4. Add a Vercel deploy hook, and document how to trigger a rebuild after I update content.
+
+## 7. Getting my data in
+
+**Primary path — Django admin.** Invest real effort here; this is the interface I'll actually live in.
+- Custom `ModelAdmin` for every model: sensible `list_display`, `list_filter`, `search_fields`, `list_editable` for the `order` field, inlines for `ExperienceHighlight` and `ProjectImage`, image thumbnail previews, drag-to-reorder via `django-admin-sortable2`
+- Group models into logical admin sections with clear labels
+- Add a "View on site" link and a "Preview" button on the singletons
+- Style it minimally with `django-admin-interface` or a small custom CSS override so it isn't ugly
+
+**Secondary — Swagger.** `/api/docs/` with a working "Authorize" button. Every write endpoint documented with a realistic request example. Authenticate with a token, POST/PUT any section, done.
+
+**Bulk load — `manage.py import_resume path/to/resume.json`.** Takes one JSON document containing my entire resume, validates it against a published JSON Schema (write that schema to `docs/resume.schema.json`), and upserts idempotently — running it twice must not duplicate rows. Include `docs/resume.example.json`, fully filled in, as the template I'll copy.
+
+**Demo data — `manage.py seed_demo`.** Creates a complete fictional-but-plausible senior-engineer persona: 2 educations, 4 roles with bullets, 6 projects with images, 30 skills across 6 categories, 4 certifications, 3 languages, 2 awards, 1 publication, hobbies, social links. Placeholder images generated locally or pulled from a public placeholder service at seed time. Include `--clear` to wipe and reseed. The site must look finished and impressive on first run.
+
+## 8. Testing
+
+**Backend** (`pytest-django` + `factory_boy`): model constraints and singleton enforcement; serializer output shape; the aggregate endpoint's query count; permission tests proving anonymous users cannot write and cannot read non-public references; contact form throttling; `import_resume` idempotency.
+
+**Frontend** (Vitest + React Testing Library + MSW): section components render from fixture data; empty and error states; the section registry renders in the order the API dictates; theme toggle persistence.
+
+**E2E** (Playwright): load the home page against a seeded backend, assert every section renders, navigate to a project detail page, submit the contact form, toggle theme and language.
+
+**CI** (GitHub Actions): ruff, mypy strict, pytest with coverage, eslint, `tsc --noEmit`, vitest, the API-types drift check, and a production build of both apps. All green before deploy.
+
+## 9. Deployment
+
+- **Frontend → Vercel.** `frontend/` as root directory, `VITE_API_URL` env var, SPA rewrite rule so deep links work on refresh.
+- **Backend → Render.** Web service from `backend/Dockerfile`, `gunicorn config.wsgi`, non-root user, health check at `/api/health/`, build command running `migrate` and `collectstatic`.
+- **Database → Neon.** Free Postgres, connection string via `DATABASE_URL`.
+- **Media → Cloudinary.** Free tier, credentials via env.
+- **Security:** `DEBUG=False` in prod, `SECRET_KEY` from env, correct `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS`, CORS limited to the Vercel domains only, HSTS and secure cookies on, no secret ever committed. Provide `.env.example` for both apps.
+
+## 10. Documentation
+
+`README.md` must let me go from clone to live without asking you anything:
+- 5-minute local setup (or `docker compose up`)
+- Every environment variable, what it does, where to get its value
+- Step-by-step first deploy for Vercel, Render, Neon, Cloudinary — including where to click
+- **"Replacing the demo data with mine"** — the exact workflow: create superuser, log into `/admin`, fill each section in order, or run `import_resume` with my JSON
+- How to add a brand-new resume section later (model → serializer → admin → regenerate types → register component)
+- Custom domain setup and how to point it at Vercel
+
+Also write `ARCHITECTURE.md` (component map, request lifecycle, the type-generation pipeline) and `DECISIONS.md` (each significant choice and its one-line rationale).
+
+## 11. How to work
+
+Build in this order, and pause at the end of each phase to show me what's running before continuing:
+
+0. Repo scaffold, tooling, CI skeleton, `docker compose up` works
+1. Models + migrations + a genuinely good admin + `seed_demo`
+2. Serializers, viewsets, aggregate endpoint, Swagger, backend tests green
+3. Type generation pipeline + typed client + query hooks + drift check
+4. Layout shell, routing, theme, and every section component rendering real API data
+5. Interactivity, animation, i18n, print view, performance and accessibility pass
+6. Frontend and E2E tests green
+7. Deploy all three services, verify the live URL end to end
+8. Documentation
+
+At every phase: strict typing, no `any`, no `# type: ignore` without a reason comment, tests alongside the code rather than bolted on at the end. When you finish, give me the live URL, the admin URL, the Swagger URL, the actual Lighthouse scores, and a numbered checklist of exactly what I do to swap in my real information.
+</script>
+
+<script>
+(function () {
+  var raw = document.getElementById('raw-prompt').textContent.trim();
+  var btn = document.getElementById('copybtn');
+  var hint = document.getElementById('hint');
+  var box = document.getElementById('rawbox');
+  box.value = raw;
+
+  btn.addEventListener('click', function () {
+    function fallback() {
+      box.classList.add('show');
+      box.focus();
+      box.select();
+      hint.textContent = 'Selected below — press ⌘C to copy.';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(raw).then(function () {
+        hint.textContent = 'Copied — ' + raw.length.toLocaleString() + ' characters.';
+      }, fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.rail a'));
+  var byId = {};
+  links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          links.forEach(function (a) { a.classList.remove('on'); });
+          var a = byId[e.target.id];
+          if (a) a.classList.add('on');
+        }
+      });
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    document.querySelectorAll('main section[id]').forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
