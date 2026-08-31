@@ -28,7 +28,10 @@ export default defineConfig({
     // Serves an already-built dist/. Building here instead would hide compiler
     // output behind Playwright's server-start timeout, which is exactly how a
     // slow build looks identical to a hung one. `make e2e` and CI both build first.
-    command: `pnpm exec vite preview --port ${PORT} --strictPort`,
+    // --host 127.0.0.1 is load-bearing: without it Vite binds "localhost", which
+    // resolves to IPv6 ::1 on GitHub runners while the url below is polled over
+    // IPv4 — the server starts fine and is simply never reachable.
+    command: `pnpm exec vite preview --host 127.0.0.1 --port ${PORT} --strictPort`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env["CI"],
     stdout: "pipe",
