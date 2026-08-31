@@ -61,6 +61,7 @@ test-frontend: ## Run the Vitest suite
 
 e2e: ## Run Playwright against a seeded backend and a production build
 	cd backend && uv run python manage.py migrate && uv run python manage.py seed_demo --no-images
+	cd frontend && VITE_API_URL=http://127.0.0.1:8000 pnpm run build:only
 	cd backend && CONTACT_THROTTLE_RATE=1000/hour uv run python manage.py runserver 8000 & \
 		sleep 4; cd frontend && VITE_API_URL=http://127.0.0.1:8000 pnpm exec playwright test; \
 		status=$$?; pkill -f "manage.py runserver" || true; exit $$status

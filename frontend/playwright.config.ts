@@ -25,9 +25,14 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
-    command: `pnpm run build:only && pnpm exec vite preview --port ${PORT} --strictPort`,
+    // Serves an already-built dist/. Building here instead would hide compiler
+    // output behind Playwright's server-start timeout, which is exactly how a
+    // slow build looks identical to a hung one. `make e2e` and CI both build first.
+    command: `pnpm exec vite preview --port ${PORT} --strictPort`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env["CI"],
-    timeout: 180_000,
+    stdout: "pipe",
+    stderr: "pipe",
+    timeout: 120_000,
   },
 });

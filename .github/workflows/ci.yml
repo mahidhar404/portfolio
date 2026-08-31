@@ -169,6 +169,14 @@ jobs:
             sleep 1
           done
 
+      # Built as its own step so a compile error shows up as a compile error,
+      # rather than as Playwright timing out waiting for a server to appear.
+      - name: Build the frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://127.0.0.1:8000
+        run: pnpm run build:only
+
       - name: Run Playwright
         working-directory: frontend
         env:
