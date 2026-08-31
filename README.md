@@ -299,3 +299,9 @@ under what heading is decided entirely by **Site settings → sections** in the 
 
 Deeper detail: [`ARCHITECTURE.md`](ARCHITECTURE.md). Decisions and their reasoning:
 [`DECISIONS.md`](DECISIONS.md).
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Mahidhar Gedela
